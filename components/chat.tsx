@@ -3,14 +3,20 @@
 import { Button } from "@/components/ui/button";
 import {
   RiSendPlaneFill,
+  RiShining2Line,
+  RiAttachment2,
+  RiMicLine,
+  RiLeafLine
 } from "@remixicon/react";
 import { useRef, useEffect, useState } from "react";
 import useWebSocket, { ReadyState } from "react-use-websocket";
 import { useTimelogStore } from "@/lib/store";
+import { cn } from "@/lib/utils";
+import { ChatMessage } from "./chat-messages";
 
 type Message = {
     source: string;
-    content: any;
+    content: string | { thoughts: string } | Record<string, unknown>;
     type: string;
     models_usage?: {
         prompt_tokens: number;
@@ -31,6 +37,8 @@ type TimelogResponse = {
     response: TimelogEntry[];
 };
 
+
+
 export default function Chat() {
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const [message, setMessage] = useState('');
@@ -44,12 +52,14 @@ export default function Chat() {
             const data: Message = JSON.parse(lastMessage.data);
             
             if (data.source === 'timelog' && data.type === 'TextMessage') {
-                const timelogData: TimelogResponse = JSON.parse(data.content);
+                const timelogData: TimelogResponse = JSON.parse(typeof data.content === 'string' ? data.content : JSON.stringify(data.content));
                 setTimelogs(timelogData.response);
-                // Add thoughts to chat
+                // Only add thoughts to chat
                 setMessages(prev => [...prev, {
-                    ...data,
-                    content: timelogData.thoughts
+                    source: data.source,
+                    type: data.type,
+                    content: { thoughts: timelogData.thoughts },
+                    models_usage: data.models_usage
                 }]);
             } else {
                 setMessages(prev => [...prev, data]);
@@ -73,88 +83,63 @@ export default function Chat() {
     };
 
     return (
-        <div className="h-full flex flex-col px-4 ">
+        <div className="h-full flex flex-col px-4 w-full">
+            <div className="relative grow">
+                <div className="max-w-3xl mx-auto mt-6 space-y-6">
+                    {/* <div className="text-center my-8">
+                        <div className="inline-flex items-center bg-white rounded-full border border-black/[0.08] shadow-sm text-xs font-medium py-1 px-3 text-foreground/80">
+                            <RiShining2Line
+                                className="me-1.5 text-muted-foreground/70 -ms-1"
+                                size={14}
+                                aria-hidden="true"
+                            />
+                            Today
+                        </div>
+                    </div> */}
+                    {messages.map((msg, index) => {
+                        const messageContent = msg.source === 'user' ? 
+                            (typeof msg.content === 'string' ? msg.content : null) :
+                            (msg.source === 'timelog' && msg.type === 'TextMessage' && 
+                            typeof msg.content === 'object' && 'thoughts' in msg.content ? 
+                            String(msg.content.thoughts) : null);
+                        
+                        return messageContent ? (
+                            <ChatMessage key={index} isUser={msg.source === 'user'}>
+                                {messageContent}
+                            </ChatMessage>
+                        ) : null;
+                    })}
+                    <div ref={messagesEndRef} aria-hidden="true" />
+                </div>
+            </div>
+            {/* Footer */}
             <div className="sticky bottom-0 pt-4 md:pt-8">
                 <div className="max-w-3xl mx-auto bg-background rounded-[20px] pb-4 md:pb-8">
-                    <div
-                        className="relative rounded-[20px] border border-transparent bg-muted transition-colors focus-within:bg-muted/50 focus-within:border-input has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-50 [&:has(input:is(:disabled))_*]:pointer-events-none">
-              <div className="flex flex-col flex-1 overflow-y-auto p-4">
-                  {messages.map((msg, index) => (
-                      <div key={index} className="mb-4 p-3 bg-muted/30 rounded-lg">
-                          {typeof msg.content === 'string' ? msg.content : 
-                           msg.type === 'ToolCallSummaryMessage' ? JSON.stringify(msg.content) :
-                           msg.type === 'ToolCallRequestEvent' ? 'Processing request...' :
-                           msg.type === 'ToolCallExecutionEvent' ? 'Executing...' :
-                           JSON.stringify(msg.content)}
-                      </div>
-                  ))}
-                  <div ref={messagesEndRef} />
-              </div>
-              <textarea
-                  className="flex sm:min-h-[84px] w-full bg-transparent px-4 py-3 text-[15px] leading-relaxed text-foreground placeholder:text-muted-foreground/70 focus-visible:outline-none [resize:none]"
-                  placeholder="How can I help..."
-                  aria-label="Enter your prompt"
-                  value={message}
-                  onChange={(e) => setMessage(e.target.value)}
-                  onKeyDown={(e) => {
-                      if (e.key === 'Enter' && !e.shiftKey) {
-                          e.preventDefault();
-                          handleSend();
-                      }
-                  }}
-              />
+                    <div className="relative rounded-[20px] border border-transparent bg-muted transition-colors focus-within:bg-muted/50 focus-within:border-input has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-50 [&:has(input:is(:disabled))_*]:pointer-events-none">
+                        <textarea
+                            className="flex sm:min-h-[84px] w-full bg-transparent px-4 py-3 text-[15px] leading-relaxed text-foreground placeholder:text-muted-foreground/70 focus-visible:outline-none [resize:none]"
+                            placeholder="Ask me anything..."
+                            aria-label="Enter your prompt"
+                            value={message}
+                            onChange={(e) => setMessage(e.target.value)}
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter' && !e.shiftKey) {
+                                    e.preventDefault();
+                                    handleSend();
+                                }
+                            }}
+                        />
                         {/* Textarea buttons */}
                         <div className="flex items-center justify-end gap-2 p-3">
-                            {/*/!* Left buttons *!/*/}
-                            {/*<div className="flex items-center gap-2">*/}
-                            {/*    <Button*/}
-                            {/*        variant="outline"*/}
-                            {/*        size="icon"*/}
-                            {/*        className="rounded-full size-8 border-none hover:bg-background hover:shadow-md transition-[box-shadow]"*/}
-                            {/*    >*/}
-                            {/*        <RiAttachment2*/}
-                            {/*            className="text-muted-foreground/70"*/}
-                            {/*            size={20}*/}
-                            {/*            aria-hidden="true"*/}
-                            {/*        />*/}
-                            {/*        <span className="sr-only">Attach</span>*/}
-                            {/*    </Button>*/}
-                            {/*    <Button*/}
-                            {/*        variant="outline"*/}
-                            {/*        size="icon"*/}
-                            {/*        className="rounded-full size-8 border-none hover:bg-background hover:shadow-md transition-[box-shadow]"*/}
-                            {/*    >*/}
-                            {/*        <RiMicLine*/}
-                            {/*            className="text-muted-foreground/70"*/}
-                            {/*            size={20}*/}
-                            {/*            aria-hidden="true"*/}
-                            {/*        />*/}
-                            {/*        <span className="sr-only">Audio</span>*/}
-                            {/*    </Button>*/}
-                            {/*    <Button*/}
-                            {/*        variant="outline"*/}
-                            {/*        size="icon"*/}
-                            {/*        className="rounded-full size-8 border-none hover:bg-background hover:shadow-md transition-[box-shadow]"*/}
-                            {/*    >*/}
-                            {/*        <RiLeafLine*/}
-                            {/*            className="text-muted-foreground/70"*/}
-                            {/*            size={20}*/}
-                            {/*            aria-hidden="true"*/}
-                            {/*        />*/}
-                            {/*        <span className="sr-only">Action</span>*/}
-                            {/*    </Button>*/}
-                            {/*</div>*/}
+                    
                             {/* Right buttons */}
                             <div className="flex items-center gap-2">
-
-                                <Button 
+                                <Button
                                     className="rounded-full h-8"
                                     onClick={handleSend}
                                     disabled={readyState !== ReadyState.OPEN}
                                 >
-                                     <RiSendPlaneFill
-                                            size={20}
-                                     /> Send
+                                    <RiSendPlaneFill size={20} /> Send
                                 </Button>
                             </div>
                         </div>
