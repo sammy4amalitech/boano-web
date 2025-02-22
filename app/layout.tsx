@@ -1,7 +1,15 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-
+import {ClerkProvider, SignedIn, SignedOut, SignInButton, UserButton} from "@clerk/nextjs";
+import React from "react";
+import { Separator } from "@/components/ui/separator"
+import {
+    SidebarInset,
+    SidebarProvider,
+    SidebarTrigger,
+} from "@/components/ui/sidebar";
+import {AppSidebar} from "@/components/app-sidebar";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -22,15 +30,24 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return (
+  return (<>
+      <ClerkProvider>
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <main className="">
-          {children}
-        </main>
+      <SidebarProvider>
+        <AppSidebar />
+        <SidebarTrigger className="-ml-1" />
+        <SidebarInset>
+          <main className="">
+            {children}
+          </main>
+        </SidebarInset>
+      </SidebarProvider>
       </body>
     </html>
+      </ClerkProvider>
+  </>
   );
 }
