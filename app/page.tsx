@@ -1,4 +1,4 @@
-import TimelogContainer from "@/components/ui/timelog-container";
+import {TimelogContainer} from "@/features/timelog";
 
 export default function Home() {
   return (

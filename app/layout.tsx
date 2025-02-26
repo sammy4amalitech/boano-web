@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import {ClerkProvider, SignedIn, SignedOut, SignInButton, UserButton} from "@clerk/nextjs";
+import {ClerkProvider} from "@clerk/nextjs";
+import Providers from "./providers";
 import React from "react";
 import { Separator } from "@/components/ui/separator"
 import {
@@ -30,24 +31,25 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return (<>
-      <ClerkProvider>
+  return (
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-      <SidebarProvider>
-        <AppSidebar />
-        <SidebarTrigger className="-ml-1" />
-        <SidebarInset>
-          <main className="">
-            {children}
-          </main>
-        </SidebarInset>
-      </SidebarProvider>
+        <ClerkProvider>
+
+            <SidebarProvider>
+              <AppSidebar />
+              <SidebarTrigger className="-ml-1" />
+              <SidebarInset>
+                <main className="">
+                  {children}
+                </main>
+              </SidebarInset>
+            </SidebarProvider>
+
+        </ClerkProvider>
       </body>
     </html>
-      </ClerkProvider>
-  </>
   );
 }

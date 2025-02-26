@@ -24,6 +24,7 @@ import {
     SidebarRail,
 } from "@/components/ui/sidebar"
 import {TeamSwitcher} from "@/components/team-switcher";
+import {useAuth, useUser} from "@clerk/nextjs";
 
 // This is sample data.
 const data = {
@@ -165,7 +166,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 {/*<NavMain items={data.navMain} />*/}
             </SidebarContent>
             <SidebarFooter>
-                <NavUser user={data.user} />
+                <NavUser />
             </SidebarFooter>
             <SidebarRail />
         </Sidebar>

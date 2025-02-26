@@ -1,9 +1,6 @@
-"use client"
-import { Textarea } from "@/components/ui/textarea"; // Adjust the import path based on your project structure
+import { Textarea } from "@/components/ui/textarea";
 
-function TimeLogEditor() {
-
-
+export default function TimelogEditor() {
     return (
         <div className="relative">
             <Textarea
@@ -15,5 +12,3 @@ function TimeLogEditor() {
         </div>
     );
 }
-
-export default TimeLogEditor;

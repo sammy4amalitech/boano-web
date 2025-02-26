@@ -1,11 +1,10 @@
-import React from 'react';
-import { TimelogEntry } from '@/types';
+import { TimelogEntry } from "../types";
 
 type TimelogsProps = {
     timelogs: TimelogEntry[];
 };
 
-function Timelogs({ timelogs }: TimelogsProps) {
+export default function Timelogs({ timelogs }: TimelogsProps) {
     return (
         <div className={'flex flex-col gap-4'}>
             {timelogs.map((log, index) => (
@@ -19,5 +18,3 @@ function Timelogs({ timelogs }: TimelogsProps) {
         </div>
     );
 }
-
-export default Timelogs;
