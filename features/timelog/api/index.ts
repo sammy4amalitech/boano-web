@@ -1,10 +1,15 @@
-import { TimelogCreateInput, TimelogUpdateInput, Timelog } from '../types';
+import {TimelogCreateInput, TimelogUpdateInput, Timelog, TimeLogApiResponse} from '../types';
 
-export async function fetchTimelogs(): Promise<Timelog[]> {
-  const response = await fetch('/api/timelogs');
+const API = "http://0.0.0.0:8000/api"
+
+export async function fetchTimelogs(): Promise<
+    TimeLogApiResponse
+> {
+  const response = await fetch(`${API}/v1/user/3c5ab744-00a7-407f-8a01-259f21e8e24b/time_logs`)
   if (!response.ok) {
     throw new Error('Failed to fetch timelogs');
   }
+
   return response.json();
 }
 

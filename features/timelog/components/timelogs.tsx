@@ -1,4 +1,5 @@
-import { TimelogEntry } from "../types";
+import {TimelogEntry} from "@/types";
+
 
 type TimelogsProps = {
     timelogs: TimelogEntry[];

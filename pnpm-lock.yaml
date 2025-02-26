@@ -98,6 +98,9 @@ dependencies:
   tailwindcss-animate:
     specifier: ^1.0.7
     version: 1.0.7(tailwindcss@4.0.0)
+  zod:
+    specifier: ^3.24.2
+    version: 3.24.2
   zustand:
     specifier: ^5.0.3
     version: 5.0.3(@types/react@19.0.0)(react@19.0.0)
@@ -109,6 +112,9 @@ devDependencies:
   '@tailwindcss/postcss':
     specifier: ^4
     version: 4.0.0
+  '@tanstack/react-query-devtools':
+    specifier: ^5.66.9
+    version: 5.66.9(@tanstack/react-query@5.66.9)(react@19.0.0)
   '@types/node':
     specifier: ^20
     version: 20.0.0
@@ -2183,7 +2189,21 @@ packages:
 
   /@tanstack/query-core@5.66.4:
     resolution: {integrity: sha512-skM/gzNX4shPkqmdTCSoHtJAPMTtmIJNS0hE+xwTTUVYwezArCT34NMermABmBVUg5Ls5aiUXEDXfqwR1oVkcA==}
-    dev: false
+
+  /@tanstack/query-devtools@5.65.0:
+    resolution: {integrity: sha512-g5y7zc07U9D3esMdqUfTEVu9kMHoIaVBsD0+M3LPdAdD710RpTcLiNvJY1JkYXqkq9+NV+CQoemVNpQPBXVsJg==}
+    dev: true
+
+  /@tanstack/react-query-devtools@5.66.9(@tanstack/react-query@5.66.9)(react@19.0.0):
+    resolution: {integrity: sha512-70G6AR35he53SYUcUK6EdqNR18zejCv1rM6900gjZP408EAex56YLwVSeijzk9lWeU2J42G9Fjh0i1WngUTsgw==}
+    peerDependencies:
+      '@tanstack/react-query': ^5.66.9
+      react: ^18 || ^19
+    dependencies:
+      '@tanstack/query-devtools': 5.65.0
+      '@tanstack/react-query': 5.66.9(react@19.0.0)
+      react: 19.0.0
+    dev: true
 
   /@tanstack/react-query-next-experimental@5.66.9(@tanstack/react-query@5.66.9)(next@15.2.0-canary.67)(react@19.0.0):
     resolution: {integrity: sha512-jtoI4nsqgG9/7eYj1538plMaLnPW9IHg+ecsu/y6ex0aaQrb2+uglGntP7Vq8yZz1Zw2WHvvk+QIoISDi1LvpQ==}
@@ -2204,7 +2224,6 @@ packages:
     dependencies:
       '@tanstack/query-core': 5.66.4
       react: 19.0.0
-    dev: false
 
   /@tiptap/core@2.11.5(@tiptap/pm@2.11.5):
     resolution: {integrity: sha512-jb0KTdUJaJY53JaN7ooY3XAxHQNoMYti/H6ANo707PsLXVeEqJ9o8+eBup1JU5CuwzrgnDc2dECt2WIGX9f8Jw==}
@@ -5174,7 +5193,6 @@ packages:
   /react@19.0.0:
     resolution: {integrity: sha512-V8AVnmPIICiWpGfm6GLzCR/W5FXLchHop40W4nXBmdlEceh16rCN8O8LNWm5bh5XUX91fh7KpA+W0TgMKmgTpQ==}
     engines: {node: '>=0.10.0'}
-    dev: false
 
   /reflect.getprototypeof@1.0.10:
     resolution: {integrity: sha512-00o4I+DVrefhv+nX0ulyi3biSHCPDe+yLv5o/p6d/UVlirijB8E16FtfwSAi4g3tcqrQ4lRAqQSoFEZJehYEcw==}

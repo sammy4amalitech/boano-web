@@ -37,7 +37,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <ClerkProvider>
-
+          <Providers>
             <SidebarProvider>
               <AppSidebar />
               <SidebarTrigger className="-ml-1" />
@@ -47,7 +47,7 @@ export default function RootLayout({
                 </main>
               </SidebarInset>
             </SidebarProvider>
-
+          </Providers>
         </ClerkProvider>
       </body>
     </html>
