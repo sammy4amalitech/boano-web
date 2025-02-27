@@ -2,8 +2,8 @@
 
 import Chat from "@/components/chat";
 import {useTimelogStore} from "@/lib/store";
-import {TimelogSidebar} from "./timelog-sidebar";
 import {SidebarProvider, SidebarTrigger} from "@/components/ui/sidebar";
+import { TimelogSidebar } from "./timelog-sidebar";
 
 export default function TimelogContainer() {
   const { timelogs, sidebarOpen, setSidebarOpen } = useTimelogStore();
@@ -11,8 +11,8 @@ export default function TimelogContainer() {
   return (
     <SidebarProvider defaultOpen={sidebarOpen} open={sidebarOpen} onOpenChange={setSidebarOpen}
                      style={{
-                         "--sidebar-width": "25rem",
-                         "--sidebar-width-mobile": "20rem",
+                         ["--sidebar-width" as string]: "25rem",
+                         ["--sidebar-width-mobile" as string]: "20rem",
                      }}
     >
         <div className="w-full flex relative">

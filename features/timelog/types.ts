@@ -15,16 +15,19 @@ export interface Timelog {
 }
 
 export interface TimelogCreateInput {
-  projectId: string;
+  task: string;
   description: string;
-  startTime: Date;
-  endTime?: Date;
+  start_time: string;
+  end_time?: string;
+  source: string;
 }
 
 export interface TimelogUpdateInput {
+  task?: string;
   description?: string;
-  startTime?: Date;
-  endTime?: Date;
+  start_time?: string;
+  end_time?: string;
+  source?: string;
 }
 
 const timeLogSchema = z.object({
