@@ -13,7 +13,7 @@ export async function fetchTimelogs(): Promise<
   return response.json();
 }
 
-export async function batchCreateTimeLog(data: TimelogCreateInput[]): Promise<Timelog> {
+export async function batchCreateTimeLog(data: TimelogUpdateInput[]): Promise<Timelog> {
   const response = await fetch(`${API}/v1/user/3c5ab744-00a7-407f-8a01-259f21e8e24b/time_logs/batch`, {
     method: 'POST',
     headers: {

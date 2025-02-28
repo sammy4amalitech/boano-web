@@ -1,10 +1,10 @@
 import React from 'react';
 import {useQueries} from "@tanstack/react-query";
-import TimeLogContainer from "@/app/time-log/time-log-container";
+import TimeLogContainer from "@/components/time-log-container";
 
 function Page(props) {
     return (
-        <div><TimeLogContainer/></div>
+        <div className={'py-12 px-12'}><TimeLogContainer/></div>
     );
 }
 
