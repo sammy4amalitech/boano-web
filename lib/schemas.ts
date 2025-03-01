@@ -6,11 +6,10 @@ export const TimeLogSchema = z.object({
   start_time: z.string().datetime(),
   end_time: z.string().datetime(),
   source: z.string(),
-  id: z.number(),
+  id: z.string(),
   creator_id: z.string(),
   created_at: z.string().datetime()
 });
-
 export const TimeLogResponseSchema = z.object({
   data: z.array(TimeLogSchema),
   total_count: z.number(),
@@ -19,8 +18,8 @@ export const TimeLogResponseSchema = z.object({
   items_per_page: z.number()
 });
 
-export type TimeLog = z.infer<typeof TimeLogSchema>;
-export type TimeLogResponse = z.infer<typeof TimeLogResponseSchema>;
+export type TimeLogResponse = z.infer<typeof TimeLogSchema>;
+export type TimeLogListResponse = z.infer<typeof TimeLogResponseSchema>;
 
 export async function fetchTimeLogs(userId: string) {
   try {

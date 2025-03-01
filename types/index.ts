@@ -8,5 +8,13 @@ export type TimelogEntry = {
 
 export type TimelogResponse = {
     thoughts: string;
-    response: TimelogEntry[];
+    response: TimelogEntry &{
+        id: string;
+        created_at: string;
+        updated_at: string;
+}[],
+    total_count: number;
+    has_more: boolean;
+    page: number;
+    items_per_page: number;
 };

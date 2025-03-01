@@ -1,24 +1,26 @@
-import {TimelogEntry} from "@/types";
+"use client"
 import {Input} from "@/components/ui/input";
 import {FormField, FormItem, FormLabel, Form} from "@/components/ui/form";
 import {DateField, DateInput} from "@/components/datetime-field";
-import {useFieldArray, useForm} from "react-hook-form";
 import {Button} from "@/components/ui/button";
-import {useBatchCreateTimelog} from "../hooks";
-import {TimelogUpdateInput} from "../types";
-import {useState} from "react";
+import {useBatchUpdateTimelog, useBatchUpsertTimeLog} from "../hooks";
+import {TimelogUpdateInput, TimeLogUpsertInput} from "../types";
 import {z} from "zod";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {parseDateTime} from "@internationalized/date";
-import {DateTime} from "luxon";
+import {TimeLogResponse} from "@/lib/schemas";
+import {useQueryClient} from "@tanstack/react-query";
+import {useFieldArray, useForm} from "react-hook-form";
+import {toast} from "sonner";
 
 
 type TimelogsProps = {
-    timelogs: TimelogEntry[];
+    timelogs: TimeLogResponse[];
 };
 
 // Define Zod schema for form validation
 const timelogEntrySchema = z.object({
+    id: z.string(),
     title: z.string().min(1, "Title is required"),
     date: z.string(),
     start_time: z.string().min(1, "Start time is required"),
@@ -33,15 +35,14 @@ const timelogsFormSchema = z.object({
 type FormValues = z.infer<typeof timelogsFormSchema>;
 
 export default function Timelogs({ timelogs }: TimelogsProps) {
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const { mutateAsync: batchUpdate } = useBatchCreateTimelog();
+    const { mutateAsync: batchUpsert, isPending } = useBatchUpsertTimeLog();
     
     const form = useForm<FormValues>({
         resolver: zodResolver(timelogsFormSchema),
         defaultValues: {
             entries: timelogs.map(log => ({
-                title: log.title,
-                date: log.date,
+                id: log.id,
+                title: log.task,
                 start_time: log.start_time,
                 end_time: log.end_time,
                 source: log.source
@@ -49,11 +50,13 @@ export default function Timelogs({ timelogs }: TimelogsProps) {
         }
     });
 
+    const formValues = form.watch();
+
     const {
         fields: entries,
-        update: updateEntries,
-        append: appendEntry,
-        remove: removeEntry
+        // update: updateEntries,
+        // append: appendEntry,
+        // remove: removeEntry
     } = useFieldArray({
         control: form.control,
         name: 'entries',
@@ -62,37 +65,41 @@ export default function Timelogs({ timelogs }: TimelogsProps) {
 
     const onSubmit = async (data: FormValues) => {
         try {
-            setIsSubmitting(true);
-            
+
             // Transform form data to match API requirements
-            const updateData = data.entries.map(entry => {
-                const [task, description] = entry.title.split(' - ');
+            const updateData : TimeLogUpsertInput[] = data.entries.map(entry => {
                 return {
-                    task: task || entry.title,
-                    description: description || '',
+                    id: entry.id,
+                    task: entry.title,
+                    description: "",
                     start_time: entry.start_time,
                     end_time: entry.end_time,
                     source: entry.source
-                } as TimelogUpdateInput;
+                }
             });
             
-            await batchUpdate(updateData);
-            alert('Timelogs updated successfully!');
+            await batchUpsert(updateData);
+            toast.success('Time logs updated');
         } catch (error) {
             console.error('Failed to update timelogs:', error);
-            alert('Failed to update timelogs. Please try again.');
+            toast.error('Failed to update timelogs');
         } finally {
-            setIsSubmitting(false);
+            // await queryClient.invalidateQueries(['timelogs']);
         }
     };
 
 
+
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <form  className="space-y-4" onSubmit={form.handleSubmit(onSubmit)}>
                 <div className="flex justify-end">
-                    <Button type="submit" disabled={isSubmitting}>
-                        {isSubmitting ? 'Updating...' : 'Update Timelogs'}
+                    <Button type="button" disabled={isPending} onClick={()=>{
+                        console.log('form.handleSubmit(onSubmit)')
+                         onSubmit(formValues)
+                    }
+                    }>
+                        {isPending ? 'Updating...' : 'Update Timelogs'}
                     </Button>
                 </div>
                 <div className={'flex flex-col gap-8'}>

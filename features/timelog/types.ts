@@ -23,6 +23,16 @@ export interface TimelogCreateInput {
 }
 
 export interface TimelogUpdateInput {
+  id: string;
+  task?: string;
+  description?: string;
+  start_time?: string;
+  end_time?: string;
+  source?: string;
+}
+
+export interface TimeLogUpsertInput {
+  id?: string;
   task?: string;
   description?: string;
   start_time?: string;

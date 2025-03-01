@@ -4,7 +4,7 @@ import "./globals.css";
 import {ClerkProvider} from "@clerk/nextjs";
 import Providers from "./providers";
 import React from "react";
-import { Separator } from "@/components/ui/separator"
+import { Toaster } from "@/components/ui/sonner"
 import {
     SidebarInset,
     SidebarProvider,
@@ -47,6 +47,7 @@ export default function RootLayout({
                 </main>
               </SidebarInset>
             </SidebarProvider>
+              <Toaster />
           </Providers>
         </ClerkProvider>
       </body>

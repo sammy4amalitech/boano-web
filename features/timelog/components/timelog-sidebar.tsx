@@ -3,14 +3,14 @@ import {
   SidebarContent,
 } from "@/components/ui/sidebar"
 import {useTimelogStore} from "@/lib/store";
-import {Timelogs, useBatchCreateTimelog} from "@/features/timelog";
+import {Timelogs, useBatchUpsertTimeLog} from "@/features/timelog";
 import { Button } from "@/components/ui/button";
 import { DateTime } from "luxon";
 
 export function TimelogSidebar() {
   const {timelogs} = useTimelogStore();
 
-  const batchCreateTimeLog = useBatchCreateTimelog();
+  const batchCreateTimeLog = useBatchUpsertTimeLog();
 
   const handleSave = async () => {
     if (timelogs.length === 0) return;

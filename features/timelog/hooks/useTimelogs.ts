@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { fetchTimelogs, batchCreateTimeLog, updateTimelog, deleteTimelog } from '../api';
-import {Timelog, TimelogUpdateInput} from "@/features/timelog";
+import {fetchTimelogs, batchUpsertTimeLog, deleteTimelog, batchUpdateTimelog} from '../api';
+import { TimelogUpdateInput} from "@/features/timelog";
 
 export const TIMELOGS_QUERY_KEY = ['timelogs'] as const;
 
@@ -14,23 +14,23 @@ export function useTimelogs() {
   });
 }
 
-export function useBatchCreateTimelog() {
+export function useBatchUpsertTimeLog() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: batchCreateTimeLog,
+    mutationFn: batchUpsertTimeLog,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: TIMELOGS_QUERY_KEY });
     },
   });
 }
 
-export function useUpdateTimelog() {
+export function useBatchUpdateTimelog() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: TimelogUpdateInput }) =>
-      updateTimelog(id, data),
+    mutationFn: ({data }: { data: TimelogUpdateInput[] }) =>
+      batchUpdateTimelog( data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: TIMELOGS_QUERY_KEY });
     },
