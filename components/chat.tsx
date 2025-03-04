@@ -13,6 +13,7 @@ import useWebSocket, { ReadyState } from "react-use-websocket";
 import { useTimelogStore } from "@/lib/store";
 import { cn } from "@/lib/utils";
 import { ChatMessage } from "./chat-messages";
+import {TimeLogAgentResponse} from "@/lib/schemas";
 
 type Message = {
     source: string;
@@ -52,8 +53,9 @@ export default function Chat() {
             const data: Message = JSON.parse(lastMessage.data);
             
             if (data.source === 'timelog' && data.type === 'TextMessage') {
-                const timelogData: TimelogResponse = JSON.parse(typeof data.content === 'string' ? data.content : JSON.stringify(data.content));
-                setTimelogs(timelogData.response);
+                const timelogData: TimelogResponse = JSON.parse(typeof data.content === 'string' ? data.content : JSON.stringify(data.content))
+                // TODO: Fix type
+                setTimelogs(timelogData.response as unknown as TimeLogAgentResponse[]);
                 // Only add thoughts to chat
                 setMessages(prev => [...prev, {
                     source: data.source,

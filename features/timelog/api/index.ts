@@ -25,7 +25,9 @@ export async function fetchTimelogs(): Promise<
 export async function batchUpsertTimeLog(data: TimeLogUpsertInput[]): Promise<Timelog> {
   const { getToken } = await auth();
   const token = await getToken();
-
+  console.log("update", {
+    timelogs: data
+  })
   const response = await fetch(`${API}/v1/user/time_logs/batch`, {
     method: 'POST',
     headers: {
@@ -43,6 +45,7 @@ export async function batchUpsertTimeLog(data: TimeLogUpsertInput[]): Promise<Ti
 }
 
 export async function batchUpdateTimelog( data: TimelogUpdateInput[]): Promise<Timelog> {
+
   const response = await fetch(`${API}/v1/user/3c5ab744-00a7-407f-8a01-259f21e8e24b/time_logs/upsert`, {
     method: 'POST',
     headers: {

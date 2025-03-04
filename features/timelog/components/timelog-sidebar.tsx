@@ -1,50 +1,34 @@
+"use client"
 import {
   Sidebar,
   SidebarContent,
 } from "@/components/ui/sidebar"
 import {useTimelogStore} from "@/lib/store";
-import {Timelogs, useBatchUpsertTimeLog} from "@/features/timelog";
-import { Button } from "@/components/ui/button";
-import { DateTime } from "luxon";
+import {Timelogs} from "@/features/timelog";
+import {TimeLogResponse} from "@/lib/schemas";
 
 export function TimelogSidebar() {
   const {timelogs} = useTimelogStore();
 
-  const batchCreateTimeLog = useBatchUpsertTimeLog();
-
-  const handleSave = async () => {
-    if (timelogs.length === 0) return;
-    
-    try {
-      // Transform timelogs to match TimelogCreateInput format
-      const batchLogs = timelogs.map(timelog => ({
-        task: timelog.title,
-        description: "",
-        start_time: DateTime.fromFormat(timelog.start_time, 'hh:mm').toUTC().toISO() || '',
-        end_time: DateTime.fromFormat(timelog.end_time, 'hh:mm').toUTC().toISO() || '',
-        source: timelog.source
-      }));
-        await batchCreateTimeLog.mutateAsync(batchLogs);
-    } catch (error) {
-      console.error('Error saving timelogs:', error);
-    } 
-  };
+  // Transform timelogs to match the expected format
+  const transformedTimelogs: TimeLogResponse[] = timelogs.map(log => ({
+    id: 0, // Using created_at as a temporary ID since TimeLogAgentResponse doesn't have an id
+    task: log.task,
+    start_date: log.start_date,
+    end_date: log.end_date,
+    source: log.source,
+    created_at: log.created_at,
+    description: log.description,
+    creator_id: "",
+  }));
 
   return (
     <Sidebar side="right" >
       <SidebarContent>
-        {timelogs.length > 0 && (
-          <div className="px-4 py-2">
-            <Button
-              className="w-full"
-              onClick={handleSave}
-              disabled={batchCreateTimeLog.isPending}
-            >
-              {batchCreateTimeLog.isPending ? 'Saving...' : 'Save Timelogs'}
-            </Button>
-          </div>
+        {timelogs.length > 0 ? (
+            <Timelogs timelogs={transformedTimelogs}/>        ) : (
+          <div className="p-4 text-center text-gray-400">No timelogs available</div>
         )}
-        <Timelogs timelogs={timelogs}/>
       </SidebarContent>
     </Sidebar>
   )

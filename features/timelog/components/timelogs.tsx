@@ -3,36 +3,20 @@ import {Input} from "@/components/ui/input";
 import {FormField, FormItem, FormLabel, Form} from "@/components/ui/form";
 import {DateField, DateInput} from "@/components/datetime-field";
 import {Button} from "@/components/ui/button";
-import {useBatchUpdateTimelog, useBatchUpsertTimeLog} from "../hooks";
-import {TimelogUpdateInput, TimeLogUpsertInput} from "../types";
-import {z} from "zod";
+import { useBatchUpsertTimeLog} from "../hooks";
+import { TimeLogUpsertInput} from "../types";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {parseDateTime} from "@internationalized/date";
-import {TimeLogResponse} from "@/lib/schemas";
-import {useQueryClient} from "@tanstack/react-query";
+import {FormValues, TimeLogResponse, timelogsFormSchema} from "@/lib/schemas";
 import {useFieldArray, useForm} from "react-hook-form";
 import {toast} from "sonner";
 
 
 type TimelogsProps = {
-    timelogs: TimeLogResponse[];
+    timelogs: TimeLogResponse[]
 };
 
-// Define Zod schema for form validation
-const timelogEntrySchema = z.object({
-    id: z.string(),
-    title: z.string().min(1, "Title is required"),
-    date: z.string(),
-    start_time: z.string().min(1, "Start time is required"),
-    end_time: z.string(),
-    source: z.string()
-});
 
-const timelogsFormSchema = z.object({
-    entries: z.array(timelogEntrySchema)
-});
-
-type FormValues = z.infer<typeof timelogsFormSchema>;
 
 export default function Timelogs({ timelogs }: TimelogsProps) {
     const { mutateAsync: batchUpsert, isPending } = useBatchUpsertTimeLog();
@@ -43,8 +27,8 @@ export default function Timelogs({ timelogs }: TimelogsProps) {
             entries: timelogs.map(log => ({
                 id: log.id,
                 title: log.task,
-                start_time: log.start_time,
-                end_time: log.end_time,
+                start_date: log.start_date,
+                end_date: log.end_date,
                 source: log.source
             }))
         }
@@ -72,8 +56,8 @@ export default function Timelogs({ timelogs }: TimelogsProps) {
                     id: entry.id,
                     task: entry.title,
                     description: "",
-                    start_time: entry.start_time,
-                    end_time: entry.end_time,
+                    start_time: entry.start_date,
+                    end_time: entry.end_date,
                     source: entry.source
                 }
             });
@@ -96,7 +80,7 @@ export default function Timelogs({ timelogs }: TimelogsProps) {
                 <div className="flex justify-end">
                     <Button type="button" disabled={isPending} onClick={()=>{
                         console.log('form.handleSubmit(onSubmit)')
-                         onSubmit(formValues)
+                        onSubmit(formValues)
                     }
                     }>
                         {isPending ? 'Updating...' : 'Update Timelogs'}
@@ -118,15 +102,15 @@ export default function Timelogs({ timelogs }: TimelogsProps) {
                                 <div className={'flex gap-4'}>
                                     <FormField
                                         control={form.control}
-                                        name={`entries.${index}.start_time`}
+                                        name={`entries.${index}.start_date`}
                                         render={({field}) => (
                                             <FormItem>
-                                                <FormLabel htmlFor={'startDate'}>Start date</FormLabel>
+                                                <FormLabel htmlFor={'start_date'}>Start date</FormLabel>
                                                 <DateField
                                                     className="*:not-first:mt-2"
                                                     hourCycle={24}
-                                                    defaultValue={parseDateTime(field.value)}
-                                                    value={parseDateTime(field.value)}
+                                                    defaultValue={field.value ? parseDateTime(field.value) : undefined}
+                                                    value={field.value ? parseDateTime(field.value) : undefined}
                                                     onChange={(date) => {
                                                         field.onChange(date ? date.toString() : '');
                                                     }}
@@ -138,15 +122,15 @@ export default function Timelogs({ timelogs }: TimelogsProps) {
                                     />
                                     <FormField
                                         control={form.control}
-                                        name={`entries.${index}.end_time`}
+                                        name={`entries.${index}.end_date`}
                                         render={({field}) => (
                                             <FormItem>
-                                                <FormLabel htmlFor={'endDate'}>End date</FormLabel>
+                                                <FormLabel htmlFor={'end_date'}>End date</FormLabel>
                                                 <DateField
                                                     className="*:not-first:mt-2"
                                                     hourCycle={24}
-                                                    defaultValue={parseDateTime(field.value)}
-                                                    value={parseDateTime(field.value)}
+                                                    defaultValue={field.value ? parseDateTime(field.value) : undefined}
+                                                    value={field.value ? parseDateTime(field.value) : undefined}
                                                     onChange={(date) => {
                                                         field.onChange(date ? date.toString() : '');
                                                     }}

@@ -32,7 +32,7 @@ export interface TimelogUpdateInput {
 }
 
 export interface TimeLogUpsertInput {
-  id?: string;
+  id?: number;
   task?: string;
   description?: string;
   start_time?: string;
