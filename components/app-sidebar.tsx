@@ -63,6 +63,11 @@ const data = {
             url: "/time-log",
             icon: RiTimelineView,
         },
+        {
+            title: "Plugins",
+            url: "/plugins",
+            icon: Bot,
+        },
     ],
     projects: [
         {

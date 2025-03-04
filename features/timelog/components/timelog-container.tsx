@@ -1,9 +1,9 @@
 "use client";
 
-import Chat from "@/components/chat";
 import {useTimelogStore} from "@/lib/store";
 import {SidebarProvider, SidebarTrigger} from "@/components/ui/sidebar";
 import { TimelogSidebar } from "./timelog-sidebar";
+import {Chat} from "@/features/assistant";
 
 export default function TimelogContainer() {
   const { timelogs, sidebarOpen, setSidebarOpen } = useTimelogStore();
